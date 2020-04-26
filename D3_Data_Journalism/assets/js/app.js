@@ -1,3 +1,4 @@
+set parameters for SVG
 var svgWidth = 960;
 var svgHeight = 600;
 
@@ -23,13 +24,17 @@ var chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
 
+//////////////////////////////////////////
+///////// Functions for Elements /////////
+//////////////////////////////////////////
 
 // set initial param
 var chosenXAxis = "poverty";
 var chosenYAxis = "healthcare";
+// console.log(chosenXAxis)
+// console.log(chosenYAxis)
 
-
-
+// function used for updating x-scale var upon click on axis label
 function xScale(data, chosenXAxis) {
     // create scales
     var xLinearScale = d3.scaleLinear()
@@ -55,6 +60,7 @@ function yScale(data, chosenYAxis) {
   
   };
 
+  // update xAxis var when label is clicked
   function renderXAxes(newXScale, xAxis) {
     var bottomAxis = d3.axisBottom(newXScale);
   
@@ -76,7 +82,7 @@ function yScale(data, chosenYAxis) {
     return yAxis;
   }
   
-
+  // update circles group with transitions
   function renderCircles(circlesGroup, newXScale, chosenXAxis, newYScale, chosenYAxis) {
   
     circlesGroup.transition()
@@ -97,7 +103,7 @@ function yScale(data, chosenYAxis) {
     return cLabels;
   }
   
-
+  // update circles group with new tooltip
   function updateToolTip(circlesGroup, chosenXAxis, chosenYAxis) {
   
     if (chosenXAxis === "poverty") {
@@ -131,7 +137,7 @@ function yScale(data, chosenYAxis) {
 
 
     circlesGroup
-    
+    // mouseover event - show tooltip
         .on("mouseover", function(data) {
       toolTip.show(data);
         })
@@ -143,6 +149,12 @@ function yScale(data, chosenYAxis) {
     return circlesGroup;
   };
 
+
+//////////////////////////////////////////
+////////// D3 - Generate Chart ///////////
+//////////////////////////////////////////
+
+  // Retrieve data from the CSV file and execute everything below
 d3.csv("data.csv").then(function(censusData, err) {
     if (err) throw err;
   
@@ -161,6 +173,10 @@ d3.csv("data.csv").then(function(censusData, err) {
     // yLinearScale function above csv import
     var yLinearScale = yScale(censusData, chosenYAxis);
   
+    // // Create y scale function
+    // var yLinearScale = d3.scaleLinear()
+    //   .domain([0, d3.max(censusData, d => d.healthcare)])
+    //   .range([height, 0]);
   
     // Create initial axis functions
     var bottomAxis = d3.axisBottom(xLinearScale);
@@ -268,7 +284,8 @@ d3.csv("data.csv").then(function(censusData, err) {
   
           // console.log(chosenXAxis)
   
-        
+          // functions here found above csv import
+          // updates x scale for new data
           xLinearScale = xScale(censusData, chosenXAxis);
   
           // updates x axis with transition
@@ -329,7 +346,10 @@ d3.csv("data.csv").then(function(censusData, err) {
           // replaces chosenXaxis with value
           chosenYAxis = value;
   
-          
+          // console.log(chosenYAxis)
+  
+          // functions here found above csv import
+          // updates y scale for new data
           yLinearScale = yScale(censusData, chosenYAxis);
   
           // updates y axis with transition
@@ -384,4 +404,3 @@ d3.csv("data.csv").then(function(censusData, err) {
   }).catch(function(error) {
     console.log(error);
   });
-  
